@@ -68,7 +68,7 @@ Choose **Borrow book** on a title, enter or select a registered library ID, and 
 The sole persistent store is browser `localStorage`, under `chapter-library-v1`:
 
 ```json
-{"version":1,"members":[],"books":[],"loans":[]}
+{ "version": 1, "members": [], "books": [], "loans": [] }
 ```
 
 Members include `id`, `name`, `email`, `phone` and `createdAt`. Books include `id`, `title`, `author`, `category`, `description`, `copies` and `createdAt`. Loans include `id`, `bookId`, `memberId`, `borrowedAt` and `returnedAt` (initially `null`). Timestamps are stored as ISO strings and displayed in the browser’s local time. Books and loans use browser-generated UUIDs; members use the largest existing member ID plus one.
