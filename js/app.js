@@ -1,6 +1,11 @@
 import { createStore } from "./storage.js";
 import { registerMember } from "./members.js";
-import { saveBook, availableFor, activeFor, loadDemoBooks } from "./books.js";
+import {
+  saveBook,
+  availableFor,
+  activeFor,
+  seedDefaultBooks,
+} from "./books.js";
 import { borrowBook, returnBook, statistics } from "./loans.js";
 
 const paths = {
@@ -188,10 +193,7 @@ function renderDashboard(data) {
             "Add your first book to start building a collection your readers will love.",
             btn("new-book", "Add your first book"),
           )
-    }</section>` +
-    (!data.books.length && !data.members.length && !data.loans.length
-      ? `<div class="onboarding"><div><h3>A fresh start for your library</h3><p>Build your own collection, or take a look around with six sample books.</p></div>${btn("demo", "Add sample books", "book", true)}</div>`
-      : "");
+    }</section>`;
 }
 function searchField(placeholder) {
   return `<div class="search-field">${icon("search")}<input id="search" type="search" aria-label="${placeholder}" placeholder="${placeholder}" value="${esc(query)}" autocomplete="off"></div>`;
@@ -539,11 +541,6 @@ document.addEventListener("click", (e) => {
       "open-loans": () => {
         location.hash = "loans";
       },
-      demo: () => {
-        loadDemoBooks(store);
-        render();
-        notify("Six sample books are ready to explore.");
-      },
     })[action]?.();
   } catch (error) {
     notify(error.message, true);
@@ -566,4 +563,10 @@ window.addEventListener("storage", (e) => {
     notify("Library updated from another tab.");
   }
 });
+// Populate the first visit without replacing any existing library records.
+try {
+  seedDefaultBooks(store);
+} catch (error) {
+  notify(error.message, true);
+}
 render();

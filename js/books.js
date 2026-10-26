@@ -30,57 +30,78 @@ export function saveBook(store, fields, id) {
     return book;
   });
 }
-export const demoBooks = [
+// A small starting collection for a new, completely empty library.
+export const defaultBooks = [
   [
     "Things Fall Apart",
     "Chinua Achebe",
     "Fiction",
     5,
-    "A powerful portrait of life in an Igbo village, and a world on the edge of change.",
-  ],
-  [
-    "The Alchemist",
-    "Paulo Coelho",
-    "Fiction",
-    3,
-    "A young shepherd follows a dream across the desert, discovering the wisdom of the journey.",
+    "A village in Nigeria faces change through the story of Okonkwo and his family.",
   ],
   [
     "A Grain of Wheat",
     "Ngũgĩ wa Thiong’o",
     "Fiction",
     4,
-    "Interwoven lives and hidden histories on the eve of Kenyan independence.",
+    "Lives, loyalties and hidden histories intertwine on the eve of Kenyan independence.",
   ],
   [
-    "The Psychology of Money",
-    "Morgan Housel",
-    "Personal growth",
-    2,
-    "Timeless lessons on wealth, greed, happiness, and the choices we make.",
-  ],
-  [
-    "A Brief History of Time",
-    "Stephen Hawking",
-    "Science",
-    2,
-    "An inviting exploration of the universe, from the big bang to black holes.",
-  ],
-  [
-    "Becoming",
-    "Michelle Obama",
-    "Biography",
+    "The River Between",
+    "Ngũgĩ wa Thiong’o",
+    "Fiction",
     3,
-    "A candid reflection on the experiences that shape a life.",
+    "A young man tries to unite two communities divided by tradition and change.",
+  ],
+  [
+    "Pride and Prejudice",
+    "Jane Austen",
+    "Fiction",
+    3,
+    "Elizabeth Bennet navigates family expectations, first impressions and love.",
+  ],
+  [
+    "Animal Farm",
+    "George Orwell",
+    "Fiction",
+    3,
+    "A farmyard rebellion becomes a fable about power and broken promises.",
+  ],
+  [
+    "To Kill a Mockingbird",
+    "Harper Lee",
+    "Fiction",
+    3,
+    "Scout Finch grows up in a small Southern town and learns about courage and injustice.",
+  ],
+  [
+    "Jane Eyre",
+    "Charlotte Brontë",
+    "Fiction",
+    3,
+    "An orphaned girl grows into an independent woman determined to choose her own path.",
+  ],
+  [
+    "Treasure Island",
+    "Robert Louis Stevenson",
+    "Fiction",
+    3,
+    "A mysterious map takes young Jim Hawkins on an adventure among pirates.",
   ],
 ];
-export function loadDemoBooks(store) {
-  store.update((data) => {
-    if (data.books.length || data.members.length || data.loans.length)
-      throw new Error(
-        "Sample books can only be added to an entirely empty library.",
-      );
-    data.books = demoBooks.map(
+
+export function seedDefaultBooks(store) {
+  const data = store.snapshot();
+  if (
+    store.status().blocked ||
+    data.books.length ||
+    data.members.length ||
+    data.loans.length
+  ) {
+    return false;
+  }
+  store.update((next) => {
+    next.books = defaultBooks.map(
       ([title, author, category, copies, description]) => ({
         id: `BK-${crypto.randomUUID()}`,
         title,
@@ -92,4 +113,5 @@ export function loadDemoBooks(store) {
       }),
     );
   });
+  return true;
 }

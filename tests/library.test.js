@@ -7,7 +7,7 @@ import {
   STORAGE_KEY,
 } from "../js/storage.js";
 import { registerMember } from "../js/members.js";
-import { saveBook, availableFor, loadDemoBooks } from "../js/books.js";
+import { saveBook, availableFor, seedDefaultBooks } from "../js/books.js";
 import { borrowBook, returnBook, statistics } from "../js/loans.js";
 function memory() {
   const values = new Map();
@@ -231,14 +231,61 @@ test("stale tabs cannot overwrite newer records", () => {
   registerMember(two, { name: "Second" });
   assert.equal(two.snapshot().members.length, 2);
 });
-test("sample books are explicit and never overwrite any user data", () => {
-  const s = createStore(memory());
-  loadDemoBooks(s);
-  assert.equal(s.snapshot().books.length, 6);
-  assert.throws(() => loadDemoBooks(s), /empty/);
-  const t = createStore(memory());
-  registerMember(t, { name: "A" });
-  assert.throws(() => loadDemoBooks(t), /empty/);
+test("new libraries start with eight classics and do not duplicate them on refresh", () => {
+  const storage = memory(),
+    store = createStore(storage);
+  assert.equal(seedDefaultBooks(store), true);
+  assert.equal(store.snapshot().books.length, 8);
+  assert.equal(new Set(store.snapshot().books.map((b) => b.id)).size, 8);
+  assert.deepEqual(statistics(store.snapshot()), {
+    members: 0,
+    titles: 8,
+    copies: 27,
+    borrowed: 0,
+    available: 27,
+  });
+  const saved = storage.getItem(STORAGE_KEY);
+  const reopened = createStore(storage);
+  assert.equal(seedDefaultBooks(reopened), false);
+  assert.equal(storage.getItem(STORAGE_KEY), saved);
+});
+test("default classics never change existing books, members or loans", () => {
+  const { store, storage, a, book } = fixture();
+  borrowBook(store, book.id, a.id);
+  const saved = storage.getItem(STORAGE_KEY);
+  assert.equal(seedDefaultBooks(store), false);
+  assert.equal(storage.getItem(STORAGE_KEY), saved);
+  const memberOnly = createStore(memory());
+  registerMember(memberOnly, { name: "Existing reader" });
+  assert.equal(seedDefaultBooks(memberOnly), false);
+  assert.equal(memberOnly.snapshot().books.length, 0);
+});
+test("default loading preserves malformed saved records", () => {
+  const storage = memory();
+  storage.setItem(STORAGE_KEY, "not json");
+  const store = createStore(storage);
+  assert.equal(seedDefaultBooks(store), false);
+  assert.equal(storage.getItem(STORAGE_KEY), "not json");
+});
+test("failed default-book writes do not populate memory or report success", () => {
+  const storage = memory(),
+    store = createStore(storage);
+  storage.setItem = () => {
+    throw Error("QuotaExceededError");
+  };
+  assert.throws(() => seedDefaultBooks(store), /Could not save/);
+  assert.deepEqual(store.snapshot(), emptyData());
+  assert.equal(storage.getItem(STORAGE_KEY), null);
+});
+test("two first-visit tabs cannot overwrite or duplicate the starting collection", () => {
+  const storage = memory(),
+    one = createStore(storage),
+    two = createStore(storage);
+  seedDefaultBooks(one);
+  assert.throws(() => seedDefaultBooks(two), /another tab/);
+  two.load();
+  assert.equal(seedDefaultBooks(two), false);
+  assert.deepEqual(two.snapshot(), one.snapshot());
 });
 test("snapshots are isolated and unexpected stored properties stripped", () => {
   const s = createStore(memory());

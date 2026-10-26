@@ -4,9 +4,9 @@ Date: 26 October 2026 (Africa/Nairobi).
 
 ## Core rules
 
-`npm test`: **20 passed, 0 failed**, using Node.js’s built-in test runner. No third-party test dependency.
+`npm test`: **24 passed, 0 failed**, using Node.js’s built-in test runner. No third-party test dependency.
 
-Coverage includes unique member IDs; required names and optional contacts; five-copy inventory with two borrowers and a return; unknown IDs; duplicate/repeated borrowing; unavailable titles; different titles for one member; repeat returns; inventory reductions; required book fields and copy limits; exact state reload; dashboard counts; invalid stored schemas, duplicates, orphans, timestamps, excess active loans and unknown versions; malformed startup preservation; storage access/write failures; stale tabs; explicit sample loading; isolated snapshots.
+Coverage includes unique member IDs; required names and optional contacts; five-copy inventory with two borrowers and a return; unknown IDs; duplicate/repeated borrowing; unavailable titles; different titles for one member; repeat returns; inventory reductions; required book fields and copy limits; exact state reload; dashboard counts; invalid stored schemas, duplicates, orphans, timestamps, excess active loans and unknown versions; malformed startup preservation; storage access/write failures; stale tabs; safe first-visit loading; isolated snapshots.
 
 ## Simplified interface checks
 
@@ -22,7 +22,15 @@ Verified locally in the Codex in-app browser:
 - Checked the mobile layout at 390 × 844: the document fits the viewport, the sidebar note is hidden, and the four navigation links remain in the scrollable navigation strip. Cleared the test viewport afterward.
 - Browser console reported no warnings or errors during these checks.
 
-The storage key and data schema are unchanged, so application updates continue to use existing records. Startup never overwrites data; malformed records remain untouched and editing is blocked with a plain-language error. Failed writes do not report success.
+The storage key and data schema are unchanged, so application updates continue to use existing records. An entirely empty library receives the classic starting collection once. Startup never overwrites existing records; malformed records remain untouched and editing is blocked with a plain-language error. Failed writes do not report success.
+
+## Default classic books
+
+- A fresh browser origin opened directly with eight titles, 27 total copies and 27 available copies, with no manual loading step.
+- Edited _The River Between_ from three copies to four and refreshed. The catalogue stayed at eight titles and retained four copies; totals became 28 instead of resetting to 27. Set the test copy count back to three afterward.
+- The catalogue displays all eight titles with authors, descriptions and availability.
+- Core tests additionally verify repeat initialization, preservation of existing members/books/loans and malformed records, failed storage writes, and competing first-visit tabs.
+- Existing libraries are not changed automatically. Missing classic titles can be added through the normal book form without replacing existing titles.
 
 ## Deployment
 

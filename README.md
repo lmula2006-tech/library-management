@@ -14,7 +14,7 @@ A small, friendly library workspace built with HTML5, CSS3 and vanilla JavaScrip
 - Borrowing by registered library ID. A member can borrow different titles, but cannot have two active loans of the same title. Repeated clicks cannot create duplicate loans.
 - Confirmed returns, active/returned/all transaction views, searchable history, and borrowing/return timestamps.
 - Responsive layouts, native keyboard-accessible dialogs, explicit labels, visible focus, reduced-motion support and status/error notifications.
-- Optional sample books, added only by an explicit action when **all** records are empty.
+- Eight classic books appear automatically when the library is completely empty, with 27 physical copies in total. Existing books, members and loans are never replaced.
 
 ## Technology and structure
 
@@ -28,7 +28,7 @@ library-management/
 ├── js/
 │   ├── app.js       # Rendering, navigation and dialogs
 │   ├── storage.js   # Versioned validation and atomic persistence
-│   ├── books.js     # Inventory rules and optional sample collection
+│   ├── books.js     # Inventory rules and default classics
 │   ├── members.js   # Registration and readable ID generation
 │   └── loans.js     # Borrow/return rules and statistics
 ├── tests/library.test.js
@@ -62,6 +62,12 @@ Choose **Book catalogue → Add a book**. Enter a title, author and whole number
 
 Choose **Borrow book** on a title, enter or select a registered library ID, and choose **Confirm borrowing**. All copies borrowed, unregistered IDs and duplicate active loans are rejected. Use **Loans & history** (or the dashboard’s circulation table) to return a copy, then confirm the return. The record stays in history and the copy becomes immediately available. Active transactions are sorted newest first. History supports active, returned and all-transaction filters, plus search by title, member name or ID.
 
+## Starting collection
+
+New libraries start with _Things Fall Apart_, _A Grain of Wheat_, _The River Between_, _Pride and Prejudice_, _Animal Farm_, _To Kill a Mockingbird_, _Jane Eyre_ and _Treasure Island_. The collection includes multiple copies, so borrowing and availability work immediately after registering a member.
+
+The collection is saved through the normal storage layer. Refreshing does not add duplicates or reset copy counts. A library with any existing books, members or loans is left unchanged.
+
 ## Storage and reliability
 
 The sole persistent store is browser `localStorage`, under `chapter-library-v1`:
@@ -72,7 +78,7 @@ The sole persistent store is browser `localStorage`, under `chapter-library-v1`:
 
 Members include `id`, `name`, `email`, `phone` and `createdAt`. Books include `id`, `title`, `author`, `category`, `description`, `copies` and `createdAt`. Loans include `id`, `bookId`, `memberId`, `borrowedAt` and `returnedAt` (initially `null`). Timestamps are stored as ISO strings and displayed in the browser’s local time. Books and loans use browser-generated UUIDs; members use the largest existing member ID plus one.
 
-Startup validates the saved schema, IDs, dates, references, duplicate active loans and inventory consistency. It never seeds or overwrites records automatically. If data cannot be read or validated, editing is blocked and the original value is preserved. Refresh the page and check browser storage permissions if a problem occurs; if it continues, ask your teacher for help. No malformed records are silently discarded.
+Startup validates the saved schema, IDs, dates, references, duplicate active loans and inventory consistency. An entirely empty library receives the default classics once. Existing records are never overwritten or replenished automatically. If data cannot be read or validated, editing is blocked and the original value is preserved. Refresh the page and check browser storage permissions if a problem occurs; if it continues, ask your teacher for help. No malformed records are silently discarded.
 
 Each mutation operates on a copy, validates the complete result, and writes the entire document before changing in-memory state or reporting success. Write failures leave the prior state intact. Another tab’s changes are detected and refreshed; a stale tab cannot silently overwrite newer records. This remains a one-browser, one-operator project: it is not a concurrent multi-user database.
 
@@ -112,6 +118,6 @@ Edit the files, run `npm test` if Node.js is available, and check the changed wo
 
 ## Tests and limitations
 
-Run `npm test` with Node.js 22+ (no install required). The tests exercise registration, copies, borrowing, returns, history, statistics, stored-data validation, malformed records, failed storage writes, stale tabs and safe sample loading. See `TESTING.md` for browser acceptance results.
+Run `npm test` with Node.js 22+ (no install required). The tests exercise registration, copies, borrowing, returns, history, statistics, stored-data validation, malformed records, failed storage writes, stale tabs and safe first-visit loading. See `TESTING.md` for browser acceptance results.
 
 The application is deliberately small: no authentication/roles, remote synchronization, recovery service, book deletion, email delivery, due dates or fines. localStorage has browser-specific capacity limits and may be blocked by browser policies. Use a current browser with ES modules, `crypto.randomUUID`, `structuredClone` and native `<dialog>` support, over HTTPS (localhost is also trusted). Operate from one browser. Clearing this site’s browser data permanently removes its records.
