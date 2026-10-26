@@ -41,5 +41,12 @@ Full browser-process restart has **not** been performed because closing the user
 - Approved custom hostname: `library.cosmicpenguin.xyz`.
 - Inspected DigitalOcean’s existing domain and filtered existing records before adding a CNAME. No conflicting library record existed. Saved exactly one CNAME, `library` → `oscar-mugambi.github.io.`, TTL 300 seconds. No unrelated DNS records changed.
 - DigitalOcean remains DNS-only. Authoritative nameservers and public resolvers (Google and Cloudflare) resolve the CNAME and GitHub Pages A records correctly.
-- The GitHub Pages hostname redirects to the custom domain, and custom-domain HTTP serves the application from GitHub.
-- GitHub’s initial cached DNS failure was retried through **Check again**, which requested a TLS certificate. Final HTTPS and deployed-browser verification are pending certificate provisioning and will be recorded before delivery.
+- GitHub’s initial DNS check failed despite successful public DNS resolution. Retried **Check again** and restarted the approved custom-domain configuration using GitHub’s documented troubleshooting procedure. GitHub issued and approved the certificate at approximately 20:50 EAT.
+- **HTTPS verified:** `https://library.cosmicpenguin.xyz/` returns HTTP 200 with normal certificate/hostname validation. GitHub Pages reports certificate `approved` (expires 24 January 2027) and `https_enforced: true`.
+- Plain HTTP redirects to HTTPS. Following the GitHub Pages project URL ends at `https://library.cosmicpenguin.xyz/` with HTTP 200.
+- Over HTTPS, `index.html`, CSS, favicon and all five native JavaScript modules return HTTP 200 with the expected content types. Their SHA-256 digests match the committed local source exactly.
+- Live browser smoke test on the custom HTTPS origin passed: explicitly loaded six sample titles (19 copies), registered `Deployment Test Reader` as `LIB-0001`, borrowed *Things Fall Apart* (18 available, 1 borrowed), returned it (19 available, 0 borrowed), refreshed and verified persistence, then confirmed the returned history and its timestamps.
+- Confirmed restore on the live site cleared only the temporary smoke-test records. Explicitly added the six sample books again for the preview; there are no test members or transactions in that preview. New browsers start empty and can choose sample books themselves.
+- The deployed browser reported no console errors or warnings during these checks.
+
+No implementation or deployment work remains. The deliberately unperformed full browser-process restart and Live Server extension-specific check are noted above; browser refresh, tab reopening, static HTTP serving, storage reload, and public HTTPS functionality were verified.
