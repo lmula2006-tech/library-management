@@ -130,15 +130,7 @@ test("dashboard uses actual titles, copies and active transactions", () => {
     available: 4,
   });
 });
-test("export JSON restores all data and relationships atomically", () => {
-  const { store, book, a } = fixture();
-  borrowBook(store, book.id, a.id);
-  const backup = JSON.parse(JSON.stringify(store.snapshot()));
-  const restored = createStore(memory());
-  restored.restore(backup);
-  assert.deepEqual(restored.snapshot(), store.snapshot());
-});
-test("malformed, duplicate, orphaned, inconsistent and future-version backups rejected unchanged", () => {
+test("malformed, duplicate, orphaned, inconsistent and future-version data rejected unchanged", () => {
   const { store, book, a } = fixture();
   borrowBook(store, book.id, a.id);
   const before = store.snapshot();
@@ -180,11 +172,15 @@ test("malformed, duplicate, orphaned, inconsistent and future-version backups re
   for (const mutate of mutations) {
     const bad = structuredClone(before);
     mutate(bad);
-    assert.throws(() => store.restore(bad));
+    assert.throws(() => validateData(bad));
+    assert.equal(
+      createStore({ getItem: () => JSON.stringify(bad) }).status().blocked,
+      true,
+    );
     assert.deepEqual(store.snapshot(), before);
   }
 });
-test("restore rejects more active loans than physical inventory", () => {
+test("validation rejects more active loans than physical inventory", () => {
   const { store, book, a, b } = fixture();
   borrowBook(store, book.id, a.id);
   borrowBook(store, book.id, b.id);
@@ -192,16 +188,13 @@ test("restore rejects more active loans than physical inventory", () => {
   bad.books[0].copies = 1;
   assert.throws(() => validateData(bad), /exceed/);
 });
-test("malformed startup preserves original and blocks edits until valid restore", () => {
+test("malformed startup preserves saved records and blocks edits", () => {
   const storage = memory();
   storage.setItem(STORAGE_KEY, "not json");
   const store = createStore(storage);
   assert.equal(store.status().blocked, true);
-  assert.equal(store.original(), "not json");
   assert.throws(() => registerMember(store, { name: "A" }));
   assert.equal(storage.getItem(STORAGE_KEY), "not json");
-  store.restore(emptyData());
-  assert.equal(store.status().blocked, false);
 });
 test("unreadable storage is handled with a recovery message", () => {
   const store = createStore({
@@ -218,15 +211,13 @@ test("unreadable storage is handled with a recovery message", () => {
     /could not be read/,
   );
 });
-test("write failure leaves memory and storage unchanged, including restore", () => {
+test("write failure leaves memory and storage unchanged", () => {
   const { store, storage } = fixture();
   const before = store.snapshot();
   storage.setItem = () => {
     throw Error("QuotaExceededError");
   };
   assert.throws(() => registerMember(store, { name: "C" }), /Could not save/);
-  assert.deepEqual(store.snapshot(), before);
-  assert.throws(() => store.restore(emptyData()), /Could not save/);
   assert.deepEqual(store.snapshot(), before);
   assert.deepEqual(JSON.parse(storage.getItem(STORAGE_KEY)), before);
 });
@@ -249,7 +240,7 @@ test("sample books are explicit and never overwrite any user data", () => {
   registerMember(t, { name: "A" });
   assert.throws(() => loadDemoBooks(t), /empty/);
 });
-test("snapshots are isolated and unexpected backup properties stripped", () => {
+test("snapshots are isolated and unexpected stored properties stripped", () => {
   const s = createStore(memory());
   const d = s.snapshot();
   d.members.push({});

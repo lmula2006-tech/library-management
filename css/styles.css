@@ -144,11 +144,6 @@ nav > a:hover:not(.active) {
   background: #ffffff22;
   color: white;
 }
-.nav-divider {
-  height: 1px;
-  background: #dce0d4;
-  margin: 15px 12px;
-}
 .sidebar-bottom {
   margin-top: auto;
 }
@@ -176,13 +171,6 @@ nav > a:hover:not(.active) {
   line-height: 1.8;
   color: #7a8173;
   margin: 7px 0;
-}
-.local-note a {
-  font-size: 10px;
-  font-weight: 600;
-}
-.local-note a span {
-  float: right;
 }
 .workspace-avatar {
   display: flex;
@@ -1020,51 +1008,6 @@ textarea {
   font-family: ui-monospace, monospace;
   color: #7e8873;
 }
-.settings-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
-.settings-card {
-  padding: 25px;
-}
-.settings-card > svg {
-  width: 27px;
-  height: 27px;
-  margin-bottom: 17px;
-  color: #6b7e59;
-}
-.settings-card h2 {
-  margin-bottom: 9px;
-}
-.settings-card p {
-  font-size: 12px;
-  color: #7c8571;
-  line-height: 1.9;
-  margin-bottom: 22px;
-}
-.settings-card .btn {
-  margin-bottom: 12px;
-}
-.settings-card small {
-  display: block;
-  font-size: 10px;
-  color: #969d8b;
-}
-.info-box {
-  margin-top: 22px;
-  border: 1px solid #e3e4d6;
-  background: #f1f2e8;
-  border-radius: 8px;
-  padding: 20px 23px;
-  color: #748064;
-  font-size: 12px;
-}
-.info-box strong {
-  display: block;
-  color: #4b6140;
-  margin-bottom: 4px;
-}
 .storage-error {
   border: 1px solid #e4c6bc;
   background: #fff0e9;
@@ -1073,10 +1016,6 @@ textarea {
   padding: 15px 19px;
   border-radius: 7px;
   margin-bottom: 24px;
-}
-.storage-error a {
-  text-decoration: underline;
-  font-weight: 600;
 }
 footer {
   display: flex;
@@ -1312,12 +1251,6 @@ dialog::backdrop {
   color: #405a34;
   margin-right: 6px;
 }
-.file-input {
-  width: 100%;
-  margin: 0 0 15px;
-  padding: 9px;
-  background: #f8f9f5;
-}
 .form-help {
   font-size: 11px;
   color: #8c967f;
@@ -1413,9 +1346,6 @@ dialog::backdrop {
   .book-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .settings-grid {
-    grid-template-columns: 1fr;
-  }
   .topbar-right .saved-state {
     display: none;
   }
@@ -1451,8 +1381,7 @@ dialog::backdrop {
     font-size: 7px;
   }
   .nav-label,
-  .sidebar-bottom,
-  .nav-divider {
+  .sidebar-bottom {
     display: none;
   }
   nav {
@@ -1644,9 +1573,6 @@ dialog::backdrop {
   }
   .field.full {
     grid-column: auto;
-  }
-  .settings-card {
-    padding: 21px;
   }
   .book-summary h3 {
     font-size: 13px;

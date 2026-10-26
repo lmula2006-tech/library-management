@@ -4,49 +4,36 @@ Date: 26 October 2026 (Africa/Nairobi).
 
 ## Core rules
 
-`npm test`: **21 passed, 0 failed**, using Node.js’s built-in test runner. No third-party test dependency.
+`npm test`: **20 passed, 0 failed**, using Node.js’s built-in test runner. No third-party test dependency.
 
-Coverage includes unique member IDs; required names and optional contacts; five-copy inventory with two borrowers and a return; unknown IDs; duplicate/repeated borrowing; unavailable titles; different titles for one member; repeat returns; inventory reductions; required book fields and copy limits; exact state reload; dashboard counts; complete JSON restore; invalid schema, duplicates, orphans, timestamps, excess active loans and unknown versions; corrupt startup recovery; storage access/write failures; stale tabs; explicit sample loading; isolated snapshots.
+Coverage includes unique member IDs; required names and optional contacts; five-copy inventory with two borrowers and a return; unknown IDs; duplicate/repeated borrowing; unavailable titles; different titles for one member; repeat returns; inventory reductions; required book fields and copy limits; exact state reload; dashboard counts; invalid stored schemas, duplicates, orphans, timestamps, excess active loans and unknown versions; malformed startup preservation; storage access/write failures; stale tabs; explicit sample loading; isolated snapshots.
 
-## Browser acceptance
+## Simplified interface checks
 
-Verified in Brave via browser automation on localhost:
+Verified locally in the Codex in-app browser:
 
-- Registered Amina Wanjiku as `LIB-0001` and Brian Otieno as `LIB-0002`.
-- Added _Things Fall Apart_ with five copies.
-- Borrowed once for each member: dashboard showed 2 members, 1 title, 5 total, 3 available and 2 borrowed.
-- Rejected duplicate borrowing by the same member and unknown `LIB-9999` with visible error messages.
-- Rejected reducing copies to 1 while 2 were borrowed.
-- Confirmed a return: available increased to 4 and borrowed decreased to 1.
-- Refreshed the page: both members, the book, loans and statistics persisted.
+- Navigation has exactly four sections: Overview, Book catalogue, Members, and Loans & history.
+- The sidebar describes automatic saving. No file-management controls or reminders remain.
+- An old removed-section URL falls back to Overview and becomes `#dashboard`.
+- Existing records from before the interface change loaded correctly: 2 members, 1 title, 5 copies and 2 active loans.
+- Confirmed a return for Brian Otieno: availability increased from 3 to 4 and active loans decreased from 2 to 1.
+- A second open tab updated its dashboard automatically. Refreshing retained the return and both existing members.
+- Returned-history filtering retained the older and newer borrowing transactions and their timestamps.
+- Checked the mobile layout at 390 × 844: the document fits the viewport, the sidebar note is hidden, and the four navigation links remain in the scrollable navigation strip. Cleared the test viewport afterward.
+- Browser console reported no warnings or errors during these checks.
 
-Additional browser checks passed:
-
-- Returned-history filter retained Brian’s transaction and displayed both timestamps.
-- Member search by `LIB-0002` opened Brian’s individual returned history.
-- Downloaded a real JSON backup and verified its 2 members, 1 title, 5 copies, 2 transactions and 1 active loan.
-- Restored that file through the file chooser into a second browser (Codex in-app browser); dashboard totals matched.
-- Rejected malformed JSON and a valid JSON file with an orphaned member reference. Existing counts stayed unchanged.
-- Reduced the title to exactly 1 active copy: borrowing became disabled. Available-only filter showed zero titles; all-copies-borrowed filter and author search showed the correct title. Restored copies to 5 afterward.
-- Tested the mobile dashboard and catalogue at 390 × 844. The document did not overflow horizontally; the navigation strip and wide data tables use their own scrolling areas. Reset the temporary viewport afterward.
-- Confirmed registration focuses the name field; Escape closes the dialog and returns focus to its initiating button. Saving a book returns focus to that book’s edit button.
-- Closed and reopened the in-app browser tab: records and the dashboard’s 2 / 1 / 5 / 4 / 1 counts persisted.
-
-Full browser-process restart has **not** been performed because closing the user’s browser would interrupt unrelated work. Page refresh, tab close/reopen and fresh storage-layer instances have been tested. VS Code Live Server instructions are documented; the local static application was served with Python’s HTTP server.
+The storage key and data schema are unchanged, so application updates continue to use existing records. Startup never overwrites data; malformed records remain untouched and editing is blocked with a plain-language error. Failed writes do not report success.
 
 ## Deployment
 
-- Created public `oscar-mugambi/library-management` repository; pushed source to default branch `main`.
-- GitHub Pages publishes from `main`, repository root; initial Pages build completed successfully.
-- Approved custom hostname: `library.cosmicpenguin.xyz`.
-- Inspected DigitalOcean’s existing domain and filtered existing records before adding a CNAME. No conflicting library record existed. Saved exactly one CNAME, `library` → `oscar-mugambi.github.io.`, TTL 300 seconds. No unrelated DNS records changed.
-- DigitalOcean remains DNS-only. Authoritative nameservers and public resolvers (Google and Cloudflare) resolve the CNAME and GitHub Pages A records correctly.
-- GitHub’s initial DNS check failed despite successful public DNS resolution. Retried **Check again** and restarted the approved custom-domain configuration using GitHub’s documented troubleshooting procedure. GitHub issued and approved the certificate at approximately 20:50 EAT.
-- **HTTPS verified:** `https://library.cosmicpenguin.xyz/` returns HTTP 200 with normal certificate/hostname validation. GitHub Pages reports certificate `approved` (expires 24 January 2027) and `https_enforced: true`.
-- Plain HTTP redirects to HTTPS. Following the GitHub Pages project URL ends at `https://library.cosmicpenguin.xyz/` with HTTP 200.
-- Over HTTPS, `index.html`, CSS, favicon and all five native JavaScript modules return HTTP 200 with the expected content types. Their SHA-256 digests match the committed local source exactly.
-- Live browser smoke test on the custom HTTPS origin passed: explicitly loaded six sample titles (19 copies), registered `Deployment Test Reader` as `LIB-0001`, borrowed *Things Fall Apart* (18 available, 1 borrowed), returned it (19 available, 0 borrowed), refreshed and verified persistence, then confirmed the returned history and its timestamps.
-- Confirmed restore on the live site cleared only the temporary smoke-test records. Explicitly added the six sample books again for the preview; there are no test members or transactions in that preview. New browsers start empty and can choose sample books themselves.
-- The deployed browser reported no console errors or warnings during these checks.
+- Public repository: `oscar-mugambi/library-management`, default branch `main`.
+- GitHub Pages publishes the repository root from `main`.
+- Custom site: https://library.cosmicpenguin.xyz/.
+- GitHub Pages project URL: https://oscar-mugambi.github.io/library-management/.
+- DigitalOcean provides DNS only: `library` CNAME → `oscar-mugambi.github.io.`, TTL 300 seconds. Unrelated DNS records are unchanged.
+- HTTPS certificate is approved and HTTPS enforcement is enabled. The custom HTTPS document returns HTTP 200 with normal certificate validation; HTTP redirects to HTTPS.
+- Initial deployment browser checks verified registration, sample inventory, borrowing, returning, history and refresh persistence on the public HTTPS origin.
 
-No implementation or deployment work remains. The deliberately unperformed full browser-process restart and Live Server extension-specific check are noted above; browser refresh, tab reopening, static HTTP serving, storage reload, and public HTTPS functionality were verified.
+## Test limits
+
+Full browser-process restart has not been performed because closing the user’s browser would interrupt unrelated work. Page refresh, tab close/reopen and fresh storage-layer instances were tested. VS Code Live Server instructions are documented; local browser checks used Python’s static HTTP server.

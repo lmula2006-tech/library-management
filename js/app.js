@@ -1,4 +1,4 @@
-import { createStore, validateData } from "./storage.js";
+import { createStore } from "./storage.js";
 import { registerMember } from "./members.js";
 import { saveBook, availableFor, activeFor, loadDemoBooks } from "./books.js";
 import { borrowBook, returnBook, statistics } from "./loans.js";
@@ -9,8 +9,6 @@ const paths = {
   members:
     "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2 M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8 M22 21v-2a4 4 0 0 0-3-3.87 M16 3.13a4 4 0 0 1 0 7.75",
   loans: "M8 3H4v4 M4 7a9 9 0 1 1-1 8 M4 7l4-4 M12 7v5l3 2",
-  settings:
-    "M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8 M10 2h4l1 3 3 1 3 1v4l-2 2-1 3-2 3h-4l-2-3-3-1-3-1v-4l2-2 1-3z",
   plus: "M12 5v14 M5 12h14",
   arrow: "M5 12h14 M14 7l5 5-5 5",
   search: "M21 21l-5-5 M10 3a7 7 0 1 0 0 14 7 7 0 0 0 0-14",
@@ -18,8 +16,6 @@ const paths = {
   available: "M9 12l2 2 4-4 M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18",
   calendar: "M4 5h16v16H4z M4 10h16 M8 3v4 M16 3v4",
   edit: "M14 5l5 5 M3 21l5-1L21 7l-5-5L3 15z",
-  download: "M12 3v12 M7 10l5 5 5-5 M4 16v5h16v-5",
-  upload: "M12 16V4 M7 9l5-5 5 5 M4 16v5h16v-5",
   close: "M6 6l12 12 M6 18L18 6",
   check: "M5 12l4 4L19 6",
   return: "M9 10L4 5l5-4 M4 5h10a7 7 0 0 1 0 14h-3",
@@ -55,7 +51,6 @@ const labels = {
   books: "Book catalogue",
   members: "Members",
   loans: "Loans & history",
-  backup: "Settings & backup",
 };
 const dateFormat = new Intl.DateTimeFormat(undefined, {
   day: "numeric",
@@ -352,19 +347,12 @@ function updateLoanResults() {
         `<a href="#books" class="btn secondary">Explore the catalogue ${icon("arrow")}</a>`,
       );
 }
-function renderBackup(data) {
-  main.innerHTML =
-    heading(
-      "A safe place for your records",
-      "Your library lives in this browser. A backup keeps its story safe.",
-      "",
-      "SETTINGS & BACKUP",
-    ) +
-    `<div class="settings-grid"><section class="panel settings-card">${icon("download")}<h2>Export your library</h2><p>Download every member, book and borrowing record as one JSON file. Keep a copy somewhere safe and export regularly.</p>${btn("export", "Export library data", "download")}<small>${quantity(data.members.length, "member")} · ${quantity(data.books.length, "title")} · ${quantity(data.loans.length, "transaction")}</small>${store.status().blocked ? `<div style="margin-top:15px">${btn("export-original", "Export original saved data", "download", true)}</div>` : ""}</section><section class="panel settings-card">${icon("upload")}<h2>Restore a backup</h2><p>Choose a previously exported JSON file. We’ll check every record and show you a summary before replacing this browser’s library.</p><label class="field" for="backup-file">Library backup file</label><input id="backup-file" class="file-input" type="file" accept=".json,application/json"><small>Restoring replaces all current records. Export a backup first.</small></section></div><div class="info-box"><strong>One library. One browser.</strong>Records are saved only on this browser and this website address. They aren’t synchronized across devices or browsers. Clearing browser data, using private browsing, or changing the website address can remove access to your records. Use Export to move your library safely.</div><div class="info-box"><strong>Simple by design</strong>No accounts, passwords, due dates, fines or backend. Everyone using this browser can access the library’s records. Backup files contain member contact information, so keep them private.</div>`;
-  document.querySelector("#backup-file").onchange = readBackup;
-}
 function render() {
-  const next = location.hash.slice(1).split("?")[0];
+  const requested = location.hash.slice(1).split("?")[0];
+  const next = labels[requested] ? requested : "dashboard";
+  if (requested && !labels[requested] && requested !== "main") {
+    history.replaceState(null, "", "#dashboard");
+  }
   if (next !== page) {
     query = "";
     bookFilter = "all";
@@ -387,7 +375,6 @@ function render() {
     books: renderBooks,
     members: renderMembers,
     loans: renderLoans,
-    backup: renderBackup,
   })[page](data);
   const { blocked, issue } = store.status();
   document.querySelector("#storage-state").innerHTML = blocked
@@ -396,7 +383,7 @@ function render() {
   if (blocked)
     main.insertAdjacentHTML(
       "afterbegin",
-      `<div class="storage-error" role="alert">${esc(issue)} <a href="#backup">Open Backup</a></div>`,
+      `<div class="storage-error" role="alert">${esc(issue)}</div>`,
     );
 }
 // Native dialogs handle focus trapping; restore the initiating control on close.
@@ -534,57 +521,6 @@ function profile(id) {
     true,
   );
 }
-// Backups never leave this browser unless the user saves or moves the file.
-function download(content, filename) {
-  const url = URL.createObjectURL(
-    new Blob([content], { type: "application/json" }),
-  );
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.append(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 10000);
-}
-function exportData() {
-  download(
-    JSON.stringify(store.snapshot(), null, 2),
-    `chapter-library-${new Date().toISOString().slice(0, 10)}.json`,
-  );
-  notify("Your library backup is ready to download.");
-}
-async function readBackup(e) {
-  const file = e.target.files[0];
-  e.target.value = "";
-  if (!file) return;
-  try {
-    if (file.size > 10 * 1024 * 1024)
-      throw new Error("Choose a JSON backup smaller than 10 MB.");
-    let candidate;
-    try {
-      candidate = JSON.parse(await file.text());
-    } catch {
-      throw new Error(
-        "This file is not valid JSON. Existing records were not changed.",
-      );
-    }
-    const next = validateData(candidate),
-      s = statistics(next);
-    openModal(
-      "Restore this library?",
-      `<p>We checked <strong>${esc(file.name)}</strong>. It contains:</p><div class="book-summary"><div><h3>${quantity(s.members, "member")} · ${quantity(s.titles, "title")}</h3><p>${quantity(s.copies, "copy", "copies")} · ${quantity(next.loans.length, "transaction")} · ${quantity(s.borrowed, "active loan")}</p></div></div><p>This will replace <strong>all current library records</strong> in this browser. Export your current data first if you want to keep it.</p><button class="btn secondary" data-action="export">${icon("download")}Export current records</button><form>${formActions("Replace & restore library")}</form>`,
-    );
-    bindForm(() => {
-      store.restore(next);
-      render();
-      closeModal();
-      notify("Library restored. All records are ready.");
-    });
-  } catch (error) {
-    notify(error.message, true);
-  }
-}
 // Delegate actions so controls remain functional after each view refresh.
 document.addEventListener("click", (e) => {
   const target = e.target.closest("[data-action]");
@@ -608,9 +544,6 @@ document.addEventListener("click", (e) => {
         render();
         notify("Six sample books are ready to explore.");
       },
-      export: exportData,
-      "export-original": () =>
-        download(store.original() ?? "", "chapter-original-recovery.json"),
     })[action]?.();
   } catch (error) {
     notify(error.message, true);
@@ -628,8 +561,8 @@ window.addEventListener("hashchange", () => {
 window.addEventListener("storage", (e) => {
   if (e.key === "chapter-library-v1" || e.key === null) {
     store.load();
-    if (modal.open) render();
-    closeModal();
+    if (modal.open) closeModal();
+    render();
     notify("Library updated from another tab.");
   }
 });

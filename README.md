@@ -1,6 +1,6 @@
 # Chapter · Library Management
 
-A small, friendly library workspace built with HTML5, CSS3 and vanilla JavaScript modules. Register readers, organize a catalogue with multiple physical copies, borrow and return books, explore history, and back up the entire library. No backend, login, frameworks, database, payments, due dates or fines.
+A small, friendly library workspace built with HTML5, CSS3 and vanilla JavaScript modules. Register readers, organize a catalogue with multiple physical copies, borrow and return books, and explore borrowing history. Records save automatically in the browser. No backend, login, frameworks, database, payments, due dates or fines.
 
 - **Live site:** https://library.cosmicpenguin.xyz/
 - **GitHub Pages address:** https://oscar-mugambi.github.io/library-management/ (redirects to the custom domain once configured)
@@ -13,7 +13,6 @@ A small, friendly library workspace built with HTML5, CSS3 and vanilla JavaScrip
 - Book creation and editing, categories, descriptions, search, category/availability filters, and per-title inventory.
 - Borrowing by registered library ID. A member can borrow different titles, but cannot have two active loans of the same title. Repeated clicks cannot create duplicate loans.
 - Confirmed returns, active/returned/all transaction views, searchable history, and borrowing/return timestamps.
-- JSON export and validated, confirmed full restore. Original malformed stored data can be downloaded for recovery.
 - Responsive layouts, native keyboard-accessible dialogs, explicit labels, visible focus, reduced-motion support and status/error notifications.
 - Optional sample books, added only by an explicit action when **all** records are empty.
 
@@ -27,7 +26,7 @@ library-management/
 ├── assets/favicon.svg
 ├── css/styles.css
 ├── js/
-│   ├── app.js       # Rendering, navigation, dialogs and backup UI
+│   ├── app.js       # Rendering, navigation and dialogs
 │   ├── storage.js   # Versioned validation and atomic persistence
 │   ├── books.js     # Inventory rules and optional sample collection
 │   ├── members.js   # Registration and readable ID generation
@@ -73,21 +72,11 @@ The sole persistent store is browser `localStorage`, under `chapter-library-v1`:
 
 Members include `id`, `name`, `email`, `phone` and `createdAt`. Books include `id`, `title`, `author`, `category`, `description`, `copies` and `createdAt`. Loans include `id`, `bookId`, `memberId`, `borrowedAt` and `returnedAt` (initially `null`). Timestamps are stored as ISO strings and displayed in the browser’s local time. Books and loans use browser-generated UUIDs; members use the largest existing member ID plus one.
 
-Startup validates the saved schema, IDs, dates, references, duplicate active loans and inventory consistency. It never seeds or overwrites records automatically. If data cannot be read or validated, editing is blocked and the original value is preserved. Open **Settings & backup** to export the original value and restore a valid backup. No malformed records are silently discarded.
+Startup validates the saved schema, IDs, dates, references, duplicate active loans and inventory consistency. It never seeds or overwrites records automatically. If data cannot be read or validated, editing is blocked and the original value is preserved. Refresh the page and check browser storage permissions if a problem occurs; if it continues, ask your teacher for help. No malformed records are silently discarded.
 
 Each mutation operates on a copy, validates the complete result, and writes the entire document before changing in-memory state or reporting success. Write failures leave the prior state intact. Another tab’s changes are detected and refreshed; a stale tab cannot silently overwrite newer records. This remains a one-browser, one-operator project: it is not a concurrent multi-user database.
 
-**Important:** Data is not synchronized between computers, browsers, devices, local development URLs or domains. Closing a normal browser preserves localStorage; private-browsing sessions may not. Clearing browser data removes records. GitHub publishes application files only; it does not store your library’s records. Browser updates normally preserve them, but backup remains essential. All people using this browser can see member contact information.
-
-## Backup and restore
-
-1. Open **Settings & backup → Export library data** to download JSON containing all records.
-2. Keep backups in a safe location. They can contain member names and contact details.
-3. To restore, select a Chapter JSON backup (maximum 10 MB).
-4. The app checks schema version, all records, unique IDs, timestamps, member/book relationships, active-loan uniqueness and inventory counts.
-5. Review the summary. Export existing records if needed, then confirm **Replace & restore library**.
-
-Invalid JSON and inconsistent/unsupported backups are rejected without modifying the library. Cancelling the confirmation changes nothing. Restore replaces the whole library together; it does not merge records. To move from localhost or the GitHub Pages hostname to the custom domain, export on the original address and import on the destination address.
+**Important:** Data is not synchronized between computers, browsers, devices, local development URLs or domains. Closing a normal browser preserves localStorage; private-browsing sessions may not. Clearing browser data removes records. GitHub publishes application files only; it does not store your library’s records. Use a normal browsing window on the same device and website address to keep access to your records. All people using this browser can see member contact information.
 
 ## GitHub Pages deployment
 
@@ -113,16 +102,16 @@ The approved hostname is `library.cosmicpenguin.xyz`. DigitalOcean is used **onl
 - Wait for GitHub’s DNS check and certificate provisioning, then enable **Enforce HTTPS** in Pages settings.
 - Check `dig +short library.cosmicpenguin.xyz CNAME` and open the custom HTTPS URL. Verify styles and native modules load as well as the document.
 
-If switching domains later, export records from the old origin first. HTTPS issuance and DNS propagation can take time. Deployment verification details and any unfinished checks are recorded in `TESTING.md`.
+Switching domains creates a separate browser data store. HTTPS issuance and DNS propagation can take time. Deployment verification details and any unfinished checks are recorded in `TESTING.md`.
 
 Official references: [GitHub Pages custom domains](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site) and [DigitalOcean DNS records](https://docs.digitalocean.com/products/networking/dns/how-to/manage-records/).
 
 ## Updating the site
 
-Edit the files, run `npm test` if Node.js is available, and check the changed workflows locally. Commit and push to `main`; GitHub Pages republishes automatically. Verify the deployed site after the build. Application updates do not replace local records; avoid changing the storage key or schema without a migration. Never commit member data or backup files to the public repository.
+Edit the files, run `npm test` if Node.js is available, and check the changed workflows locally. Commit and push to `main`; GitHub Pages republishes automatically. Verify the deployed site after the build. Application updates do not replace local records; avoid changing the storage key or schema without a migration. Never commit member data to the public repository.
 
 ## Tests and limitations
 
-Run `npm test` with Node.js 22+ (no install required). The tests exercise registration, copies, borrowing, returns, history, statistics, serialization/restore, corrupt backups, failed storage writes, stale tabs and safe sample loading. See `TESTING.md` for browser acceptance results.
+Run `npm test` with Node.js 22+ (no install required). The tests exercise registration, copies, borrowing, returns, history, statistics, stored-data validation, malformed records, failed storage writes, stale tabs and safe sample loading. See `TESTING.md` for browser acceptance results.
 
-The application is deliberately small: no authentication/roles, remote synchronization, recovery service, book deletion, email delivery, due dates or fines. localStorage has browser-specific capacity limits and may be blocked by browser policies. Supported backups are limited to 10 MB. Use a current browser with ES modules, `crypto.randomUUID`, `structuredClone` and native `<dialog>` support, over HTTPS (localhost is also trusted). Keep regular backups and operate from one browser.
+The application is deliberately small: no authentication/roles, remote synchronization, recovery service, book deletion, email delivery, due dates or fines. localStorage has browser-specific capacity limits and may be blocked by browser policies. Use a current browser with ES modules, `crypto.randomUUID`, `structuredClone` and native `<dialog>` support, over HTTPS (localhost is also trusted). Operate from one browser. Clearing this site’s browser data permanently removes its records.

@@ -22,7 +22,7 @@ export function validateData(value) {
     value.version !== 1 ||
     !["members", "books", "loans"].every((k) => Array.isArray(value[k]))
   )
-    fail("Unsupported or incomplete backup. Use a Chapter version 1 export.");
+    fail("Unsupported or incomplete saved library data.");
   const ids = new Set(),
     members = new Set(),
     books = new Map(),
@@ -89,7 +89,7 @@ export function validateData(value) {
   for (const [id, count] of counts)
     if (count > books.get(id).copies)
       fail("Active loans exceed the book’s total copies.");
-  // Return only supported fields; never retain unexpected backup properties.
+  // Return only supported fields; never retain unexpected stored properties.
   return {
     version: 1,
     members: value.members.map(({ id, name, email, phone, createdAt }) => ({
@@ -135,12 +135,12 @@ export function createStore(storage) {
     } catch {
       blocked = true;
       issue =
-        "Saved data could not be read. Your original data has been preserved. Export the original data in Backup, then restore a valid backup to continue.";
+        "Saved library data could not be read. Existing records have not been changed. Refresh the page; if the problem continues, ask your teacher for help.";
     }
     return { data: structuredClone(data), blocked, issue };
   }
-  function persist(next, replace = false) {
-    if (blocked && !replace) fail(issue);
+  function persist(next) {
+    if (blocked) fail(issue);
     const clean = validateData(next);
     try {
       const current = storage.getItem(STORAGE_KEY);
@@ -154,7 +154,7 @@ export function createStore(storage) {
     } catch (error) {
       if (error.message.includes("another tab")) throw error;
       fail(
-        "Could not save to this browser. Storage may be full or blocked. No changes were made. Export a backup and check browser settings.",
+        "Could not save in this browser. No changes were made. Check that this site is allowed to save data and that the device has free storage.",
       );
     }
     data = clean;
@@ -167,13 +167,11 @@ export function createStore(storage) {
     load,
     snapshot: () => structuredClone(data),
     status: () => ({ blocked, issue }),
-    original: () => raw,
     update(fn) {
       const next = structuredClone(data);
       const result = fn(next);
       persist(next);
       return result;
     },
-    restore: (next) => persist(next, true),
   };
 }
