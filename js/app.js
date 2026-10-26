@@ -1,12 +1,12 @@
-import { createStore } from "./storage.js";
-import { registerMember } from "./members.js";
+import { createStore } from "./storage.js?v=3";
+import { registerMember } from "./members.js?v=3";
 import {
   saveBook,
   availableFor,
   activeFor,
   seedDefaultBooks,
-} from "./books.js";
-import { borrowBook, returnBook, statistics } from "./loans.js";
+} from "./books.js?v=3";
+import { borrowBook, returnBook, statistics } from "./loans.js?v=3";
 
 const paths = {
   dashboard: "M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z",

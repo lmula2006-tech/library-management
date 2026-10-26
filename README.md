@@ -114,7 +114,7 @@ Official references: [GitHub Pages custom domains](https://docs.github.com/en/pa
 
 ## Updating the site
 
-Edit the files, run `npm test` if Node.js is available, and check the changed workflows locally. Commit and push to `main`; GitHub Pages republishes automatically. Verify the deployed site after the build. Application updates do not replace local records; avoid changing the storage key or schema without a migration. Never commit member data to the public repository.
+Edit the files, run `npm test` if Node.js is available, and check the changed workflows locally. When changing JavaScript or CSS, increment the `?v=3` asset version in `index.html` and the JavaScript module imports together so browsers load the current files. Commit and push to `main`; GitHub Pages republishes automatically. Verify the deployed site after the build. Application updates do not replace local records; avoid changing the storage key or schema without a migration. Never commit member data to the public repository.
 
 ## Tests and limitations
 

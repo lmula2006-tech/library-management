@@ -1,4 +1,4 @@
-import { availableFor } from "./books.js";
+import { availableFor } from "./books.js?v=3";
 export function borrowBook(store, bookId, memberId) {
   return store.update((data) => {
     const member = data.members.find(
