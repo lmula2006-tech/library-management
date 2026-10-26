@@ -3,8 +3,92 @@
 A small, friendly library workspace built with HTML5, CSS3 and vanilla JavaScript modules. Register readers, organize a catalogue with multiple physical copies, borrow and return books, and explore borrowing history. Records save automatically in the browser. No backend, login, frameworks, database, payments, due dates or fines.
 
 - **Live site:** https://library.cosmicpenguin.xyz/
-- **GitHub Pages address:** https://oscar-mugambi.github.io/library-management/ (redirects to the custom domain once configured)
-- **Source:** https://github.com/oscar-mugambi/library-management
+- **Repository after accepting the transfer:** https://github.com/lmula2006-tech/library-management
+- **Original repository link:** https://github.com/oscar-mugambi/library-management (continues to work until acceptance, then GitHub redirects it)
+- **GitHub Pages address after transfer:** https://lmula2006-tech.github.io/library-management/ (uses the custom domain once Pages is configured)
+
+## Start here: a beginner’s guide for Lmula
+
+GitHub stores the project’s files online. A **repository** is the project folder on GitHub. Your computer can have its own copy of that folder, where you edit and run the project.
+
+### 1. Accept ownership of the project
+
+1. Sign in to GitHub as **lmula2006-tech**.
+2. Open the email inbox connected to that GitHub account. Check spam/junk too.
+3. Find GitHub’s repository-transfer email for **oscar-mugambi/library-management** and follow its acceptance link.
+4. Accept the transfer within **one day**. If it expires, ask Oscar to send the transfer again.
+5. After acceptance, open [your repository](https://github.com/lmula2006-tech/library-management). You should see **lmula2006-tech / library-management** at the top.
+
+You do not need to create a new repository, fork the project, or upload all the files yourself. The transfer keeps the code and its change history together. It transfers the repository; the custom domain and DigitalOcean account remain managed separately by Oscar.
+
+### 2. Get the code: easiest option
+
+If you just want to run the project or submit its files:
+
+1. Open [the repository](https://github.com/lmula2006-tech/library-management) after accepting. Before acceptance, the [original repository](https://github.com/oscar-mugambi/library-management) has the same code.
+2. Click the green **Code** button, then **Download ZIP**.
+3. Find the ZIP in your Downloads folder.
+4. Right-click it and choose **Extract All** on Windows, or double-click it on macOS. Work in the extracted folder, not inside the ZIP.
+5. The project folder should contain `index.html`, `css`, `js`, and this `README.md`.
+
+A ZIP is a snapshot of the code. Editing that downloaded copy does not update GitHub or the live website. Use GitHub Desktop below if you want to publish your changes.
+
+### 3. Open and run it in VS Code
+
+1. Install [Visual Studio Code](https://code.visualstudio.com/).
+2. Open VS Code, choose **File → Open Folder**, and select the extracted project folder. On macOS the command may appear as **File → Open…**.
+3. Open **Extensions** in the left sidebar. Search for **Live Server** and install the extension by **Ritwick Dey**.
+4. In VS Code’s file list, right-click `index.html` and choose **Open with Live Server**.
+5. The library should open in your browser. A completely empty library starts with eight classic books.
+6. Open **Members**, register a name, note the generated library ID, then borrow a book from **Book catalogue**. Use **Loans & history** to return it.
+
+Do not open `index.html` by double-clicking it in your file manager. This project uses JavaScript modules, so it needs Live Server. You do not need to install Node.js, run `npm install`, or set up a database to use the app. Node.js is only needed if you choose to run the optional code tests.
+
+Your library records stay in the browser and website address you used. The local VS Code preview and the public website have separate records. Keep using the same local address and browser; clearing that site’s browser data removes its records.
+
+### 4. Edit and publish: GitHub Desktop option
+
+[GitHub Desktop](https://desktop.github.com/) is a convenient option on Windows and macOS. It avoids needing Git terminal commands. On other operating systems, Git and VS Code’s Source Control can perform the same steps.
+
+1. Install GitHub Desktop and sign in as **lmula2006-tech**.
+2. Choose **File → Clone repository → URL**.
+3. Enter `https://github.com/lmula2006-tech/library-management.git`, choose a local folder, then click **Clone**. Cloning downloads the code and connects that folder to your GitHub repository.
+4. Choose **Repository → Open in Visual Studio Code**. If it offers another editor, set VS Code under GitHub Desktop’s default-editor preferences, or open the cloned folder directly from VS Code.
+5. Use this cloned folder for your edits instead of the ZIP copy. Before starting new work, use **Fetch origin** and **Pull origin** if Desktop offers it, to get changes made elsewhere.
+6. Edit a file and save it in VS Code. Test the app with Live Server.
+7. Return to GitHub Desktop and review the changed files. Enter a short **Summary**, such as `Update library colours`.
+8. Click **Commit to main**. A commit records a checkpoint on your computer.
+9. Click **Push origin**. This uploads your committed changes to GitHub.
+10. On GitHub, open the repository’s **Actions** tab. Wait for the **pages build and deployment** run for your change to finish successfully, then check [the live website](https://library.cosmicpenguin.xyz/).
+
+**Save → Commit → Push:** saving changes the file on your computer, committing records the change locally, and pushing sends it to GitHub. Downloading a ZIP or pressing Save alone does not change the public website.
+
+### 5. Which files should I change?
+
+| What you want to change                                | File                             |
+| ------------------------------------------------------ | -------------------------------- |
+| Page title, sidebar labels, or the main HTML structure | `index.html`                     |
+| Colours, spacing, fonts, and layout                    | `css/styles.css`                 |
+| The eight default books, authors, and copy counts      | `js/books.js`, in `defaultBooks` |
+| Page content, forms, and button behaviour              | `js/app.js`                      |
+| Member registration and library IDs                    | `js/members.js`                  |
+| Borrowing and returning rules                          | `js/loans.js`                    |
+| Browser saving and data validation                     | `js/storage.js`                  |
+
+For JavaScript or CSS updates, increase the `?v=3` version in `index.html` and the versioned imports in `js/app.js` and `js/loans.js` together, for example to `?v=4`. This tells browsers to load the updated files. Keep the same version in all those asset references.
+
+Changing `defaultBooks` only affects a completely empty library. To change books already saved in your browser, use the app’s **Add a book** or edit buttons. You can test new defaults in another browser without erasing your existing records.
+
+### 6. Check hosting after accepting the transfer
+
+1. Open **your repository → Settings → Pages**.
+2. The publishing source should be **Deploy from a branch**, branch **main**, folder **/ (root)**.
+3. To keep the current address, leave the `CNAME` file and custom-domain setting as `library.cosmicpenguin.xyz`.
+4. Ask Oscar to check DigitalOcean’s `library` CNAME record after acceptance. Its GitHub Pages target should become **lmula2006-tech.github.io.** instead of the former owner’s target. Do not create a duplicate record or change unrelated DNS records.
+5. Check that **Enforce HTTPS** is enabled after GitHub’s domain check succeeds. If GitHub needs a new certificate, provisioning can take time.
+6. Open the public site and test the catalogue, registration and a borrow/return transaction.
+
+Transferring the code does not automatically transfer the domain account. If the site stops loading after acceptance, send Oscar the Pages error message so he can check the domain connection. The technical reference below explains the project in more detail.
 
 ## Features
 
@@ -39,7 +123,7 @@ library-management/
 └── README.md
 ```
 
-## Local development
+## Local development reference
 
 1. Clone this repository and open its folder in VS Code.
 2. Install the **Live Server** extension by Ritwick Dey.
@@ -102,7 +186,7 @@ No Droplet, DigitalOcean application hosting, server or paid infrastructure is r
 The approved hostname is `library.cosmicpenguin.xyz`. DigitalOcean is used **only for DNS**.
 
 - GitHub Pages custom domain / repository `CNAME` file: `library.cosmicpenguin.xyz`.
-- DigitalOcean DNS record: type **CNAME**, hostname **library**, target **oscar-mugambi.github.io.**, TTL **300** seconds.
+- DigitalOcean DNS record: type **CNAME**, hostname **library**, TTL **300** seconds. Before transfer acceptance its target is **oscar-mugambi.github.io.**; after acceptance update the same record to **lmula2006-tech.github.io.**.
 - Do not point the CNAME at a GitHub repository URL or a path.
 - Inspect for conflicts before creating a record; preserve all unrelated DNS records.
 - Wait for GitHub’s DNS check and certificate provisioning, then enable **Enforce HTTPS** in Pages settings.
