@@ -3,29 +3,30 @@
 A small, friendly library workspace built with HTML5, CSS3 and vanilla JavaScript modules. Register readers, organize a catalogue with multiple physical copies, borrow and return books, and explore borrowing history. Records save automatically in the browser. No backend, login, frameworks, database, payments, due dates or fines.
 
 - **Live site:** https://library.cosmicpenguin.xyz/
-- **Repository after accepting the transfer:** https://github.com/lmula2006-tech/library-management
-- **Original repository link:** https://github.com/oscar-mugambi/library-management (continues to work until acceptance, then GitHub redirects it)
-- **GitHub Pages address after transfer:** https://lmula2006-tech.github.io/library-management/ (uses the custom domain once Pages is configured)
+- **Source code:** https://github.com/lmula2006-tech/library-management
+- **Original repository link:** https://github.com/oscar-mugambi/library-management (redirects to the new owner’s repository)
+- **GitHub Pages address:** https://lmula2006-tech.github.io/library-management/ (uses the custom domain once Pages is configured)
 
 ## Start here: a beginner’s guide for Lmula
 
 GitHub stores the project’s files online. A **repository** is the project folder on GitHub. Your computer can have its own copy of that folder, where you edit and run the project.
 
-### 1. Accept ownership of the project
+### 1. Find your project
+
+The ownership transfer is complete. The project is called **library-management** and belongs to **lmula2006-tech**.
 
 1. Sign in to GitHub as **lmula2006-tech**.
-2. Open the email inbox connected to that GitHub account. Check spam/junk too.
-3. Find GitHub’s repository-transfer email for **oscar-mugambi/library-management** and follow its acceptance link.
-4. Accept the transfer within **one day**. If it expires, ask Oscar to send the transfer again.
-5. After acceptance, open [your repository](https://github.com/lmula2006-tech/library-management). You should see **lmula2006-tech / library-management** at the top.
+2. Open [your repository](https://github.com/lmula2006-tech/library-management). You should see **lmula2006-tech / library-management** at the top.
+3. You can also click your profile picture, choose **Your repositories**, and look for **library-management**.
+4. Scroll down on the repository’s main page to read this guide.
 
-You do not need to create a new repository, fork the project, or upload all the files yourself. The transfer keeps the code and its change history together. It transfers the repository; the custom domain and DigitalOcean account remain managed separately by Oscar.
+The repository already contains the code and its change history. The custom domain and DigitalOcean account remain managed separately by Oscar.
 
 ### 2. Get the code: easiest option
 
 If you just want to run the project or submit its files:
 
-1. Open [the repository](https://github.com/lmula2006-tech/library-management) after accepting. Before acceptance, the [original repository](https://github.com/oscar-mugambi/library-management) has the same code.
+1. Open [your repository](https://github.com/lmula2006-tech/library-management).
 2. Click the green **Code** button, then **Download ZIP**.
 3. Find the ZIP in your Downloads folder.
 4. Right-click it and choose **Extract All** on Windows, or double-click it on macOS. Work in the extracted folder, not inside the ZIP.
@@ -79,16 +80,16 @@ For JavaScript or CSS updates, increase the `?v=3` version in `index.html` and t
 
 Changing `defaultBooks` only affects a completely empty library. To change books already saved in your browser, use the app’s **Add a book** or edit buttons. You can test new defaults in another browser without erasing your existing records.
 
-### 6. Check hosting after accepting the transfer
+### 6. Check hosting
 
 1. Open **your repository → Settings → Pages**.
 2. The publishing source should be **Deploy from a branch**, branch **main**, folder **/ (root)**.
 3. To keep the current address, leave the `CNAME` file and custom-domain setting as `library.cosmicpenguin.xyz`.
-4. Ask Oscar to check DigitalOcean’s `library` CNAME record after acceptance. Its GitHub Pages target should become **lmula2006-tech.github.io.** instead of the former owner’s target. Do not create a duplicate record or change unrelated DNS records.
+4. DigitalOcean’s existing `library` CNAME record points to **lmula2006-tech.github.io.** Oscar manages that DNS account; ask him to check the record if the custom address stops working. Do not create a duplicate record or change unrelated DNS records.
 5. Check that **Enforce HTTPS** is enabled after GitHub’s domain check succeeds. If GitHub needs a new certificate, provisioning can take time.
 6. Open the public site and test the catalogue, registration and a borrow/return transaction.
 
-Transferring the code does not automatically transfer the domain account. If the site stops loading after acceptance, send Oscar the Pages error message so he can check the domain connection. The technical reference below explains the project in more detail.
+Transferring the code does not automatically transfer the domain account. If the site stops loading, send Oscar the Pages error message so he can check the domain connection. The technical reference below explains the project in more detail.
 
 ## Features
 
@@ -186,7 +187,7 @@ No Droplet, DigitalOcean application hosting, server or paid infrastructure is r
 The approved hostname is `library.cosmicpenguin.xyz`. DigitalOcean is used **only for DNS**.
 
 - GitHub Pages custom domain / repository `CNAME` file: `library.cosmicpenguin.xyz`.
-- DigitalOcean DNS record: type **CNAME**, hostname **library**, TTL **300** seconds. Before transfer acceptance its target is **oscar-mugambi.github.io.**; after acceptance update the same record to **lmula2006-tech.github.io.**.
+- DigitalOcean DNS record: type **CNAME**, hostname **library**, TTL **300** seconds. Its target is **lmula2006-tech.github.io.**.
 - Do not point the CNAME at a GitHub repository URL or a path.
 - Inspect for conflicts before creating a record; preserve all unrelated DNS records.
 - Wait for GitHub’s DNS check and certificate provisioning, then enable **Enforce HTTPS** in Pages settings.

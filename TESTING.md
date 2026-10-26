@@ -34,11 +34,11 @@ The storage key and data schema are unchanged, so application updates continue t
 
 ## Deployment
 
-- Public repository: `oscar-mugambi/library-management`, default branch `main`.
+- Public repository: `lmula2006-tech/library-management`, default branch `main`.
 - GitHub Pages publishes the repository root from `main`.
 - Custom site: https://library.cosmicpenguin.xyz/.
-- GitHub Pages project URL: https://oscar-mugambi.github.io/library-management/.
-- DigitalOcean provides DNS only: `library` CNAME → `oscar-mugambi.github.io.`, TTL 300 seconds. Unrelated DNS records are unchanged.
+- GitHub Pages project URL: https://lmula2006-tech.github.io/library-management/.
+- DigitalOcean provides DNS only: `library` CNAME → `lmula2006-tech.github.io.`, TTL 300 seconds. Unrelated DNS records are unchanged.
 - HTTPS certificate is approved and HTTPS enforcement is enabled. The custom HTTPS document returns HTTP 200 with normal certificate validation; HTTP redirects to HTTPS.
 - Initial deployment browser checks verified registration, sample inventory, borrowing, returning, history and refresh persistence on the public HTTPS origin.
 
